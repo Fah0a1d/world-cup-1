@@ -2,13 +2,13 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>بطولة التوقعات - لوحة تحكم</title>
+<title>بطولة التوقعات - احترافي</title>
 
 <style>
 body{
 font-family:Tahoma;
 margin:0;
-background:linear-gradient(135deg,#e8f5e9,#bbdefb);
+background:linear-gradient(135deg,#e8f5e9,#e3f2fd);
 color:#222;
 text-align:center;
 }
@@ -17,7 +17,7 @@ h1{
 background:#0b5d3b;
 color:white;
 margin:0;
-padding:15px;
+padding:18px;
 }
 
 .box{
@@ -25,9 +25,9 @@ background:white;
 margin:15px auto;
 padding:15px;
 width:90%;
-max-width:750px;
+max-width:850px;
 border-radius:12px;
-box-shadow:0 5px 10px rgba(0,0,0,0.1);
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
 
 input, select{
@@ -45,12 +45,10 @@ padding:10px;
 border:none;
 border-radius:8px;
 cursor:pointer;
-margin:5px;
+margin-top:10px;
 }
 
-.admin{
-background:#ff9800;
-}
+.admin{background:#ff9800;}
 
 table{
 width:100%;
@@ -62,48 +60,70 @@ td, th{
 border:1px solid #ddd;
 padding:8px;
 }
+
+.badge{
+font-weight:bold;
+color:#0b5d3b;
+}
 </style>
 </head>
 
 <body>
 
-<h1>🏆 بطولة التوقعات (نظام نقاط احترافي)</h1>
+<h1>🏆 بطولة توقعات كأس العالم (احترافي)</h1>
 
 <!-- 👤 اللاعب -->
 <div class="box">
-<h3>اسم اللاعب</h3>
+<h3>👤 اسم اللاعب</h3>
 <input id="name" placeholder="اكتب اسمك">
+<button onclick="saveName()">دخول</button>
+<div id="welcome"></div>
 </div>
 
-<!-- 🎮 التوقع -->
+<!-- 🎮 التوقعات -->
 <div class="box">
 
-<h3 id="matchTitle">🇧🇷 البرازيل × 🇵🇹 البرتغال</h3>
-
-<select id="pick">
+<h3>🇧🇷 البرازيل × 🇵🇹 البرتغال</h3>
+<select id="m1">
 <option value="brazil">البرازيل</option>
 <option value="portugal">البرتغال</option>
 </select>
+<input id="s1" placeholder="النتيجة (2-1)">
 
-<input id="scoreGuess" placeholder="النتيجة (مثال 2-1)">
+<h3>🇫🇷 فرنسا × 🇪🇸 إسبانيا</h3>
+<select id="m2">
+<option value="france">فرنسا</option>
+<option value="spain">إسبانيا</option>
+</select>
+<input id="s2" placeholder="النتيجة">
 
-<button onclick="submitGuess()">تسجيل التوقع</button>
+<h3>🇦🇷 الأرجنتين × 🇳🇱 هولندا</h3>
+<select id="m3">
+<option value="argentina">الأرجنتين</option>
+<option value="netherlands">هولندا</option>
+</select>
+<input id="s3" placeholder="النتيجة">
 
+<h3>🇲🇦 المغرب × 🇯🇵 اليابان</h3>
+<select id="m4">
+<option value="morocco">المغرب</option>
+<option value="japan">اليابان</option>
+</select>
+<input id="s4" placeholder="النتيجة">
+
+<button onclick="submit()">تسجيل التوقع</button>
 </div>
 
-<!-- 🛠 لوحة التحكم -->
+<!-- 🛠 النتائج -->
 <div class="box">
-<h3>🛠 لوحة التحكم (أنت فقط)</h3>
+<h3>🛠 إدخال النتائج (أنت فقط)</h3>
 
-<input id="realScore" placeholder="النتيجة الفعلية (مثال 2-1)">
+<input id="r1" placeholder="نتيجة 1">
+<input id="r2" placeholder="نتيجة 2">
+<input id="r3" placeholder="نتيجة 3">
+<input id="r4" placeholder="نتيجة 4">
 
-<select id="realWinner">
-<option value="brazil">البرازيل</option>
-<option value="portugal">البرتغال</option>
-</select>
-
-<button class="admin" onclick="setResult()">إنهاء المباراة + احتساب النقاط</button>
-<button class="admin" onclick="nextMatch()">تغيير المباراة</button>
+<button class="admin" onclick="finish()">إنهاء الجولة</button>
 </div>
 
 <!-- 🏆 الترتيب -->
@@ -122,109 +142,97 @@ padding:8px;
 
 <script>
 
-let leaderboard = JSON.parse(localStorage.getItem("board")) || [];
+let players = JSON.parse(localStorage.getItem("players")) || [];
+let predictions = [];
 
-// المباراة الحالية
-let match = {
-title: "🇧🇷 البرازيل × 🇵🇹 البرتغال",
-winner: "portugal",
-score: "2-1"
-};
+let currentUser = "";
 
-let predictions = []; // تخزين توقعات اللاعبين
-
-document.getElementById("matchTitle").innerText = match.title;
-
-// تسجيل توقع اللاعب
-function submitGuess(){
-
+function saveName(){
 let name = document.getElementById("name").value;
-if(name===""){
-alert("اكتب اسمك");
+if(name==="") return;
+
+currentUser = name;
+
+document.getElementById("welcome").innerHTML =
+"مرحبًا <span class='badge'>" + name + "</span> 👋";
+}
+
+// تسجيل التوقع
+function submit(){
+
+if(currentUser===""){
+alert("سجل اسمك أول");
 return;
 }
 
 predictions.push({
-name:name,
-pick:document.getElementById("pick").value,
-score:document.getElementById("scoreGuess").value
+name:currentUser,
+
+m1:document.getElementById("m1").value,
+m2:document.getElementById("m2").value,
+m3:document.getElementById("m3").value,
+m4:document.getElementById("m4").value,
+
+s1:document.getElementById("s1").value,
+s2:document.getElementById("s2").value,
+s3:document.getElementById("s3").value,
+s4:document.getElementById("s4").value
 });
 
-alert("تم تسجيل توقعك ✔");
+alert("تم حفظ توقعك ✔");
 
 }
 
-// إنهاء المباراة + حساب النقاط
-function setResult(){
+// إنهاء الجولة + حساب النقاط
+function finish(){
 
-let realScore = document.getElementById("realScore").value;
-let realWinner = document.getElementById("realWinner").value;
+let real = {
+r1:document.getElementById("r1").value,
+r2:document.getElementById("r2").value,
+r3:document.getElementById("r3").value,
+r4:document.getElementById("r4").value
+};
 
-if(realScore===""){
-alert("اكتب النتيجة");
-return;
-}
-
-// حساب النقاط
 predictions.forEach(p=>{
 
 let points = 0;
 
-// فائز صحيح
-if(p.pick === realWinner){
-points += 1;
-}
+// مقارنة مبسطة
+if(p.s1 === real.r1) points += 3;
+if(p.s2 === real.r2) points += 3;
+if(p.s3 === real.r3) points += 3;
+if(p.s4 === real.r4) points += 3;
 
-// نتيجة صحيحة
-if(p.score === realScore){
-points += 2; // +1 إضافية = يصبح المجموع 3
-}
-
-let user = leaderboard.find(x=>x.name===p.name);
+// حفظ اللاعب
+let user = players.find(x=>x.name===p.name);
 
 if(user){
 user.points += points;
 }else{
-leaderboard.push({name:p.name, points:points});
+players.push({name:p.name, points:points});
 }
 
 });
 
-localStorage.setItem("board", JSON.stringify(leaderboard));
+localStorage.setItem("players", JSON.stringify(players));
 
 predictions = [];
 
 render();
 
-alert("تم إنهاء المباراة واحتساب النقاط ✔");
+alert("تم إنهاء الجولة ✔");
 
-}
-
-// تغيير المباراة
-function nextMatch(){
-
-let title = prompt("اكتب المباراة الجديدة (مثال: المغرب × إسبانيا)");
-let win = prompt("مين الفائز الافتراضي؟ (اكتب الاسم الإنجليزي مثل spain)");
-let score = prompt("النتيجة الصحيحة (مثال 2-0)");
-
-if(title){
-match.title = title;
-match.winner = win;
-match.score = score;
-
-document.getElementById("matchTitle").innerText = title;
-}
 }
 
 // عرض الترتيب
 function render(){
 
-leaderboard.sort((a,b)=>b.points-a.points);
+players.sort((a,b)=>b.points-a.points);
 
 let table = document.getElementById("board");
 table.innerHTML = "";
 
-leaderboard.forEach(p=>{
+players.forEach(p=>{
 table.innerHTML += `
 <tr>
 <td>${p.name}</td>
