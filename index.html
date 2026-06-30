@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>بطولة التوقعات</title>
+<title>بطولة التوقعات - نظام النقاط</title>
 
 <style>
 body{
@@ -22,75 +22,99 @@ max-width:600px;
 border-radius:12px;
 }
 
+input, select{
+padding:8px;
+margin:5px;
+width:80%;
+}
+
 button{
 background:green;
 color:white;
 padding:10px;
 border:none;
 border-radius:8px;
-margin-top:10px;
 cursor:pointer;
+margin-top:10px;
+}
+
+.result{
+margin-top:10px;
+font-weight:bold;
 }
 </style>
 </head>
 
 <body>
 
-<h1>🏆 نظام التوقعات والنقاط</h1>
+<h1>🏆 نظام التوقعات بالنقاط</h1>
 
 <div class="box">
-<h3>سجل اسمك</h3>
-<input id="playerName" placeholder="اسمك">
-<button onclick="saveName()">دخول</button>
+<h3>اسم اللاعب</h3>
+<input id="player" placeholder="اكتب اسمك">
 </div>
 
 <div class="box">
-<h3>المباراة: البرازيل × اليابان</h3>
+<h3>🇧🇷 البرازيل × 🇯🇵 اليابان</h3>
 
-<select id="pred">
+<select id="team">
 <option value="brazil">البرازيل</option>
 <option value="japan">اليابان</option>
 </select>
 
-<button onclick="addPrediction()">توقع</button>
+<br>
 
-<div id="msg"></div>
+<input id="score" placeholder="النتيجة (مثال 2-1)">
+
+<button onclick="predict()">توقع</button>
+
+<div id="out" class="result"></div>
 </div>
 
 <div class="box">
 <h3>النقاط</h3>
-<div id="score">0</div>
+<div id="points">0</div>
 </div>
 
 <script>
 
-let score = 0;
-let player = "";
+let points = 0;
 
-function saveName(){
-player = document.getElementById("playerName").value;
-alert("مرحبًا " + player);
-}
+// النتيجة الصحيحة (مؤقتًا)
+let correctWinner = "brazil";
+let correctScore = "2-1";
 
-function addPrediction(){
-if(player === ""){
-alert("اكتب اسمك أول");
+function predict(){
+
+let name = document.getElementById("player").value;
+let team = document.getElementById("team").value;
+let score = document.getElementById("score").value;
+
+if(name === ""){
+alert("اكتب اسمك");
 return;
 }
 
-let pick = document.getElementById("pred").value;
+let msg = "";
+let add = 0;
 
-// هنا لاحقًا نحط نتيجة حقيقية
-let correct = "brazil";
-
-if(pick === correct){
-score += 1;
-document.getElementById("msg").innerHTML = "✔ توقع صحيح +1";
-}else{
-document.getElementById("msg").innerHTML = "❌ خطأ";
+// فحص الفائز
+if(team === correctWinner){
+add += 1;
+msg += "✔ الفائز صحيح +1\n";
 }
 
-document.getElementById("score").innerHTML = score;
+// فحص النتيجة
+if(score === correctScore){
+add += 3;
+msg += "🔥 النتيجة صحيحة +3";
+}
+
+points += add;
+
+document.getElementById("points").innerHTML = points;
+document.getElementById("out").innerText = msg;
+
 }
 
 </script>
