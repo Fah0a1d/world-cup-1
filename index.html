@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>بطولة التوقعات الاحترافية</title>
+<title>بطولة التوقعات - المرحلة 1</title>
 
 <style>
 body{
@@ -30,7 +30,7 @@ border-radius:12px;
 box-shadow:0 4px 12px rgba(0,0,0,0.1);
 }
 
-input, select{
+input{
 padding:10px;
 margin:5px;
 width:85%;
@@ -48,7 +48,9 @@ cursor:pointer;
 margin-top:10px;
 }
 
-.admin{background:#ff9800;}
+.admin{
+background:#ff9800;
+}
 
 .match{
 border:1px solid #ddd;
@@ -61,7 +63,7 @@ border-radius:10px;
 
 <body>
 
-<h1>🏆 بطولة التوقعات - احترافي</h1>
+<h1>🏆 بطولة التوقعات - المرحلة 1</h1>
 
 <!-- 👤 اللاعب -->
 <div class="box">
@@ -73,27 +75,33 @@ border-radius:10px;
 
 <!-- ⚽ المباريات -->
 <div class="box">
-<h3 id="dayTitle"></h3>
+<h2>📅 مباريات اليوم</h2>
 <div id="matches"></div>
 </div>
 
 <!-- 🛠 لوحة التحكم -->
 <div class="box">
-<h3>🛠 إدخال النتائج (أنت)</h3>
-<div id="admin"></div>
+<h2>🛠 لوحة التحكم (إضافة مباريات)</h2>
+
+<input id="team1" placeholder="الفريق الأول">
+<input id="team2" placeholder="الفريق الثاني">
+
+<button class="admin" onclick="addMatch()">إضافة مباراة</button>
 </div>
 
 <script>
 
-// ===== حفظ اللاعب =====
-let user = localStorage.getItem("playerName") || "";
+// ======================
+// 👤 حفظ اللاعب
+// ======================
+let user = localStorage.getItem("player") || "";
 
 function saveName(){
 let name = document.getElementById("nameInput").value;
 if(!name) return;
 
 user = name;
-localStorage.setItem("playerName", name);
+localStorage.setItem("player", name);
 
 document.getElementById("welcome").innerText =
 "مرحبًا " + name + " 👋";
@@ -104,65 +112,59 @@ document.getElementById("welcome").innerText =
 "مرحبًا " + user + " 👋";
 }
 
-// ===== مباريات حسب اليوم =====
-let schedule = {
-1:[ // الاثنين
-{t1:"البرازيل", t2:"اليابان"},
-{t1:"فرنسا", t2:"إسبانيا"}
-],
-2:[ // الثلاثاء
-{t1:"الأرجنتين", t2:"هولندا"},
-{t1:"المغرب", t2:"البرتغال"}
-],
-3:[ // الأربعاء
-{t1:"إنجلترا", t2:"ألمانيا"},
-{t1:"إيطاليا", t2:"البرازيل"}
-],
-4:[ // الخميس
-{t1:"فرنسا", t2:"المغرب"},
-{t1:"البرتغال", t2:"الأرجنتين"}
-]
-};
+// ======================
+// ⚽ تخزين المباريات
+// ======================
+let matches = JSON.parse(localStorage.getItem("matches")) || [];
 
-let day = new Date().getDay(); 
-// 0 الاحد - 1 الاثنين - 2 الثلاثاء ...
-
-let todayMatches = schedule[day] || schedule[1];
-
-document.getElementById("dayTitle").innerText =
-"📅 مباريات اليوم";
-
-// عرض المباريات
-function loadMatches(){
+// ======================
+// 📅 عرض مباريات اليوم
+// ======================
+function render(){
 
 let html = "";
-let admin = "";
 
-todayMatches.forEach((m,i)=>{
+if(matches.length === 0){
+html = "لا توجد مباريات مضافة";
+}
 
+matches.forEach((m,i)=>{
 html += `
 <div class="match">
-${m.t1} × ${m.t2}
-<br>
-<input placeholder="توقع النتيجة (2-1)" id="p${i}">
+⚽ ${m.t1} × ${m.t2}
 </div>
 `;
-
-admin += `
-<div>
-${m.t1} × ${m.t2}
-<input placeholder="النتيجة (2-1)" id="r${i}">
-</div>
-`;
-
 });
 
 document.getElementById("matches").innerHTML = html;
-document.getElementById("admin").innerHTML = admin;
-
 }
 
-loadMatches();
+render();
+
+// ======================
+// ➕ إضافة مباراة
+// ======================
+function addMatch(){
+
+let t1 = document.getElementById("team1").value;
+let t2 = document.getElementById("team2").value;
+
+if(!t1 || !t2){
+alert("اكتب الفريقين");
+return;
+}
+
+matches.push({
+t1:t1,
+t2:t2
+});
+
+localStorage.setItem("matches", JSON.stringify(matches));
+
+render();
+
+alert("تمت إضافة المباراة ✔");
+}
 
 </script>
 
