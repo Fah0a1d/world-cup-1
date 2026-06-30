@@ -2,13 +2,13 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>بطولة التوقعات - احترافي</title>
+<title>بطولة كأس العالم - نظام احترافي</title>
 
 <style>
 body{
-font-family:Tahoma;
 margin:0;
-background:linear-gradient(135deg,#e8f5e9,#e3f2fd);
+font-family:Tahoma;
+background:linear-gradient(135deg,#e8f5e9,#e3f2fd,#ffffff);
 color:#222;
 text-align:center;
 }
@@ -17,235 +17,93 @@ h1{
 background:#0b5d3b;
 color:white;
 margin:0;
-padding:18px;
+padding:15px;
 }
 
-.box{
+.section{
 background:white;
 margin:15px auto;
 padding:15px;
 width:90%;
-max-width:850px;
+max-width:900px;
 border-radius:12px;
-box-shadow:0 5px 15px rgba(0,0,0,0.1);
+box-shadow:0 4px 12px rgba(0,0,0,0.1);
 }
 
-input, select{
+.match{
+border:1px solid #ddd;
 padding:10px;
-margin:5px;
-width:90%;
-border-radius:8px;
-border:1px solid #ccc;
+margin:10px 0;
+border-radius:10px;
 }
 
 button{
 background:#0b8f52;
 color:white;
-padding:10px;
+padding:8px 12px;
 border:none;
 border-radius:8px;
 cursor:pointer;
-margin-top:10px;
+margin-top:5px;
 }
 
-.admin{background:#ff9800;}
-
-table{
-width:100%;
-border-collapse:collapse;
-margin-top:10px;
+.admin{
+background:#ff9800;
 }
 
-td, th{
-border:1px solid #ddd;
+input, select{
 padding:8px;
-}
-
-.badge{
-font-weight:bold;
-color:#0b5d3b;
+margin:5px;
+width:80%;
 }
 </style>
 </head>
 
 <body>
 
-<h1>🏆 بطولة توقعات كأس العالم (احترافي)</h1>
+<h1>🏆 بطولة كأس العالم - نظام شجرة احترافي</h1>
 
-<!-- 👤 اللاعب -->
-<div class="box">
-<h3>👤 اسم اللاعب</h3>
-<input id="name" placeholder="اكتب اسمك">
-<button onclick="saveName()">دخول</button>
-<div id="welcome"></div>
+<!-- 🟢 دور 32 -->
+<div class="section">
+<h2>🟢 دور 32</h2>
+
+<div class="match">
+🇧🇷 البرازيل × 🇯🇵 اليابان
+<input placeholder="النتيجة (2-1)">
+<button class="admin">إنهاء المباراة</button>
 </div>
 
-<!-- 🎮 التوقعات -->
-<div class="box">
-
-<h3>🇧🇷 البرازيل × 🇵🇹 البرتغال</h3>
-<select id="m1">
-<option value="brazil">البرازيل</option>
-<option value="portugal">البرتغال</option>
-</select>
-<input id="s1" placeholder="النتيجة (2-1)">
-
-<h3>🇫🇷 فرنسا × 🇪🇸 إسبانيا</h3>
-<select id="m2">
-<option value="france">فرنسا</option>
-<option value="spain">إسبانيا</option>
-</select>
-<input id="s2" placeholder="النتيجة">
-
-<h3>🇦🇷 الأرجنتين × 🇳🇱 هولندا</h3>
-<select id="m3">
-<option value="argentina">الأرجنتين</option>
-<option value="netherlands">هولندا</option>
-</select>
-<input id="s3" placeholder="النتيجة">
-
-<h3>🇲🇦 المغرب × 🇯🇵 اليابان</h3>
-<select id="m4">
-<option value="morocco">المغرب</option>
-<option value="japan">اليابان</option>
-</select>
-<input id="s4" placeholder="النتيجة">
-
-<button onclick="submit()">تسجيل التوقع</button>
+<div class="match">
+🇫🇷 فرنسا × 🇪🇸 إسبانيا
+<input placeholder="النتيجة">
+<button class="admin">إنهاء المباراة</button>
 </div>
 
-<!-- 🛠 النتائج -->
-<div class="box">
-<h3>🛠 إدخال النتائج (أنت فقط)</h3>
+<div class="match">
+🇦🇷 الأرجنتين × 🇳🇱 هولندا
+<input placeholder="النتيجة">
+<button class="admin">إنهاء المباراة</button>
+</div>
 
-<input id="r1" placeholder="نتيجة 1">
-<input id="r2" placeholder="نتيجة 2">
-<input id="r3" placeholder="نتيجة 3">
-<input id="r4" placeholder="نتيجة 4">
+<div class="match">
+🇲🇦 المغرب × 🇵🇹 البرتغال
+<input placeholder="النتيجة">
+<button class="admin">إنهاء المباراة</button>
+</div>
 
-<button class="admin" onclick="finish()">إنهاء الجولة</button>
+</div>
+
+<!-- 🟡 دور 16 -->
+<div class="section">
+<h2>🟡 دور 16 (يتعبّى تلقائي)</h2>
+<p>الفائزين من دور 32 يظهرون هنا تلقائي 🔁</p>
 </div>
 
 <!-- 🏆 الترتيب -->
-<div class="box">
-<h3>🏆 جدول الترتيب</h3>
-<table>
-<thead>
-<tr>
-<th>الاسم</th>
-<th>النقاط</th>
-</tr>
-</thead>
-<tbody id="board"></tbody>
-</table>
+<div class="section">
+<h2>🏆 جدول النقاط</h2>
+<p>سيظهر ترتيب اللاعبين هنا</p>
 </div>
-
-<script>
-
-let players = JSON.parse(localStorage.getItem("players")) || [];
-let predictions = [];
-
-let currentUser = "";
-
-function saveName(){
-let name = document.getElementById("name").value;
-if(name==="") return;
-
-currentUser = name;
-
-document.getElementById("welcome").innerHTML =
-"مرحبًا <span class='badge'>" + name + "</span> 👋";
-}
-
-// تسجيل التوقع
-function submit(){
-
-if(currentUser===""){
-alert("سجل اسمك أول");
-return;
-}
-
-predictions.push({
-name:currentUser,
-
-m1:document.getElementById("m1").value,
-m2:document.getElementById("m2").value,
-m3:document.getElementById("m3").value,
-m4:document.getElementById("m4").value,
-
-s1:document.getElementById("s1").value,
-s2:document.getElementById("s2").value,
-s3:document.getElementById("s3").value,
-s4:document.getElementById("s4").value
-});
-
-alert("تم حفظ توقعك ✔");
-
-}
-
-// إنهاء الجولة + حساب النقاط
-function finish(){
-
-let real = {
-r1:document.getElementById("r1").value,
-r2:document.getElementById("r2").value,
-r3:document.getElementById("r3").value,
-r4:document.getElementById("r4").value
-};
-
-predictions.forEach(p=>{
-
-let points = 0;
-
-// مقارنة مبسطة
-if(p.s1 === real.r1) points += 3;
-if(p.s2 === real.r2) points += 3;
-if(p.s3 === real.r3) points += 3;
-if(p.s4 === real.r4) points += 3;
-
-// حفظ اللاعب
-let user = players.find(x=>x.name===p.name);
-
-if(user){
-user.points += points;
-}else{
-players.push({name:p.name, points:points});
-}
-
-});
-
-localStorage.setItem("players", JSON.stringify(players));
-
-predictions = [];
-
-render();
-
-alert("تم إنهاء الجولة ✔");
-
-}
-
-// عرض الترتيب
-function render(){
-
-players.sort((a,b)=>b.points-a.points);
-
-let table = document.getElementById("board");
-table.innerHTML = "";
-
-players.forEach(p=>{
-table.innerHTML += `
-<tr>
-<td>${p.name}</td>
-<td>${p.points}</td>
-</tr>
-`;
-});
-
-}
-
-render();
-
-</script>
 
 </body>
 </html>
