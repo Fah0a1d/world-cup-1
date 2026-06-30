@@ -2,34 +2,44 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>بطولة التوقعات - محفوظة</title>
+<title>بطولة التوقعات</title>
 
 <style>
 body{
 font-family:Tahoma;
+margin:0;
+background:linear-gradient(135deg,#e8f5e9,#bbdefb);
+color:#222;
+text-align:center;
+}
+
+h1{
 background:#0b5d3b;
 color:white;
-text-align:center;
+margin:0;
+padding:20px;
 }
 
 .box{
 background:white;
-color:black;
 margin:15px auto;
 padding:15px;
 width:90%;
 max-width:700px;
 border-radius:12px;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
 
 input, select{
-padding:8px;
+padding:10px;
 margin:5px;
 width:90%;
+border-radius:8px;
+border:1px solid #ccc;
 }
 
 button{
-background:green;
+background:#0b8f52;
 color:white;
 padding:10px;
 border:none;
@@ -45,54 +55,38 @@ border-collapse:collapse;
 }
 
 td, th{
-border:1px solid #ccc;
+border:1px solid #ddd;
 padding:8px;
+}
+
+.winner{
+color:green;
+font-weight:bold;
 }
 </style>
 </head>
 
 <body>
 
-<h1>🏆 بطولة التوقعات (حفظ تلقائي)</h1>
+<h1>🏆 بطولة توقعات كأس العالم</h1>
 
 <div class="box">
 
 <h3>اسم اللاعب</h3>
 <input id="name" placeholder="اكتب اسمك">
 
-<h3>التوقعات</h3>
+<h3>🇧🇷 البرازيل × 🇵🇹 البرتغال</h3>
 
-<p>🇧🇷 البرازيل × 🇯🇵 اليابان</p>
-<select id="m1">
+<select id="team">
 <option value="brazil">البرازيل</option>
-<option value="japan">اليابان</option>
-</select>
-
-<p>🇫🇷 فرنسا × 🇪🇸 إسبانيا</p>
-<select id="m2">
-<option value="france">فرنسا</option>
-<option value="spain">إسبانيا</option>
-</select>
-
-<p>🇦🇷 الأرجنتين × 🇳🇱 هولندا</p>
-<select id="m3">
-<option value="argentina">الأرجنتين</option>
-<option value="netherlands">هولندا</option>
-</select>
-
-<p>🏴 إنجلترا × 🇸🇳 السنغال</p>
-<select id="m4">
-<option value="england">إنجلترا</option>
-<option value="senegal">السنغال</option>
-</select>
-
-<p>🇲🇦 المغرب × 🇵🇹 البرتغال</p>
-<select id="m5">
-<option value="morocco">المغرب</option>
 <option value="portugal">البرتغال</option>
 </select>
 
-<button onclick="submitPrediction()">تسجيل التوقع</button>
+<input id="score" placeholder="النتيجة (مثال 3-1)">
+
+<button onclick="predict()">تسجيل التوقع</button>
+
+<div id="result"></div>
 
 </div>
 
@@ -104,65 +98,79 @@ padding:8px;
 <tr>
 <th>الاسم</th>
 <th>النقاط</th>
+<th>الفائز المتوقع</th>
 </tr>
 </thead>
 <tbody id="board"></tbody>
 </table>
-
 </div>
 
 <script>
 
-// النتائج (تعدلها أنت كل ما انتهت مباراة)
-let results = {
-m1:"brazil",
-m2:"france",
-m3:"argentina",
-m4:"england",
-m5:"morocco"
-};
-
-// تحميل البيانات من التخزين
 let leaderboard = JSON.parse(localStorage.getItem("board")) || [];
 
-renderBoard();
+// النتيجة الحقيقية (تعدلها أنت)
+let correctWinner = "portugal";
+let correctScore = "3-1";
 
-function submitPrediction(){
+function predict(){
 
 let name = document.getElementById("name").value;
-if(name===""){
+let team = document.getElementById("team").value;
+let score = document.getElementById("score").value;
+
+if(name === ""){
 alert("اكتب اسمك");
 return;
 }
 
-let score = 0;
+let points = 0;
+let winnerText = "";
+
+// تحويل النتيجة للفائز
+let parts = score.split("-");
+let userWinner = "";
+
+if(parseInt(parts[0]) > parseInt(parts[1])){
+userWinner = team;
+}else{
+userWinner = (team === "brazil") ? "portugal" : "brazil";
+}
 
 // حساب النقاط
-if(document.getElementById("m1").value === results.m1) score++;
-if(document.getElementById("m2").value === results.m2) score++;
-if(document.getElementById("m3").value === results.m3) score++;
-if(document.getElementById("m4").value === results.m4) score++;
-if(document.getElementById("m5").value === results.m5) score++;
+if(userWinner === correctWinner){
+points += 1;
+}
 
-// لو اللاعب موجود نحدّثه
+if(score === correctScore){
+points += 3;
+}
+
 let existing = leaderboard.find(p => p.name === name);
 
 if(existing){
-existing.score += score;
+existing.points += points;
+existing.winner = userWinner;
 }else{
-leaderboard.push({name:name, score:score});
+leaderboard.push({
+name:name,
+points:points,
+winner:userWinner
+});
 }
 
-// حفظ دائم
 localStorage.setItem("board", JSON.stringify(leaderboard));
 
-renderBoard();
+render();
+
+document.getElementById("result").innerHTML =
+"✔ تم التسجيل - الفائز المتوقع: <b>" + userWinner + "</b>";
 
 }
 
-function renderBoard(){
+function render(){
 
-leaderboard.sort((a,b)=>b.score-a.score);
+leaderboard.sort((a,b)=>b.points-a.points);
 
 let table = document.getElementById("board");
 table.innerHTML = "";
@@ -171,12 +179,15 @@ leaderboard.forEach(p=>{
 table.innerHTML += `
 <tr>
 <td>${p.name}</td>
-<td>${p.score}</td>
+<td>${p.points}</td>
+<td class="winner">${p.winner}</td>
 </tr>
 `;
 });
 
 }
+
+render();
 
 </script>
 
