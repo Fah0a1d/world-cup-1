@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>بطولة التوقعات - المرحلة 1</title>
+<title>بطولة التوقعات - المرحلة 2</title>
 
 <style>
 body{
@@ -30,7 +30,7 @@ border-radius:12px;
 box-shadow:0 4px 12px rgba(0,0,0,0.1);
 }
 
-input{
+input, select{
 padding:10px;
 margin:5px;
 width:85%;
@@ -48,10 +48,6 @@ cursor:pointer;
 margin-top:10px;
 }
 
-.admin{
-background:#ff9800;
-}
-
 .match{
 border:1px solid #ddd;
 padding:10px;
@@ -63,7 +59,7 @@ border-radius:10px;
 
 <body>
 
-<h1>🏆 بطولة التوقعات - المرحلة 1</h1>
+<h1>🏆 بطولة التوقعات - المرحلة 2</h1>
 
 <!-- 👤 اللاعب -->
 <div class="box">
@@ -73,26 +69,17 @@ border-radius:10px;
 <p id="welcome"></p>
 </div>
 
-<!-- ⚽ المباريات -->
+<!-- ⚽ المباريات + التوقع -->
 <div class="box">
-<h2>📅 مباريات اليوم</h2>
+<h2>📅 المباريات</h2>
 <div id="matches"></div>
-</div>
-
-<!-- 🛠 لوحة التحكم -->
-<div class="box">
-<h2>🛠 لوحة التحكم (إضافة مباريات)</h2>
-
-<input id="team1" placeholder="الفريق الأول">
-<input id="team2" placeholder="الفريق الثاني">
-
-<button class="admin" onclick="addMatch()">إضافة مباراة</button>
+<button onclick="savePredictions()">💾 حفظ التوقعات</button>
 </div>
 
 <script>
 
 // ======================
-// 👤 حفظ اللاعب
+// 👤 اللاعب
 // ======================
 let user = localStorage.getItem("player") || "";
 
@@ -113,27 +100,42 @@ document.getElementById("welcome").innerText =
 }
 
 // ======================
-// ⚽ تخزين المباريات
+// ⚽ المباريات
 // ======================
-let matches = JSON.parse(localStorage.getItem("matches")) || [];
+let matches = JSON.parse(localStorage.getItem("matches")) || [
+{t1:"البرازيل", t2:"اليابان"},
+{t1:"فرنسا", t2:"إسبانيا"},
+{t1:"الأرجنتين", t2:"هولندا"},
+{t1:"المغرب", t2:"البرتغال"}
+];
 
 // ======================
-// 📅 عرض مباريات اليوم
+// 🧠 توقعات اللاعبين
+// ======================
+let predictions = JSON.parse(localStorage.getItem("predictions")) || {};
+
+// ======================
+// 📅 عرض المباريات
 // ======================
 function render(){
 
 let html = "";
 
-if(matches.length === 0){
-html = "لا توجد مباريات مضافة";
-}
-
 matches.forEach((m,i)=>{
+
 html += `
 <div class="match">
 ⚽ ${m.t1} × ${m.t2}
+<br>
+
+<select id="p${i}">
+<option value="${m.t1}">${m.t1}</option>
+<option value="${m.t2}">${m.t2}</option>
+</select>
+
 </div>
 `;
+
 });
 
 document.getElementById("matches").innerHTML = html;
@@ -142,28 +144,32 @@ document.getElementById("matches").innerHTML = html;
 render();
 
 // ======================
-// ➕ إضافة مباراة
+// 💾 حفظ التوقعات
 // ======================
-function addMatch(){
+function savePredictions(){
 
-let t1 = document.getElementById("team1").value;
-let t2 = document.getElementById("team2").value;
-
-if(!t1 || !t2){
-alert("اكتب الفريقين");
+if(!user){
+alert("سجل اسمك أول");
 return;
 }
 
-matches.push({
-t1:t1,
-t2:t2
+let userPred = [];
+
+matches.forEach((m,i)=>{
+let pick = document.getElementById("p"+i).value;
+
+userPred.push({
+match:m.t1 + " vs " + m.t2,
+pick:pick
+});
 });
 
-localStorage.setItem("matches", JSON.stringify(matches));
+// حفظ لكل لاعب
+predictions[user] = userPred;
 
-render();
+localStorage.setItem("predictions", JSON.stringify(predictions));
 
-alert("تمت إضافة المباراة ✔");
+alert("تم حفظ توقعاتك ✔");
 }
 
 </script>
