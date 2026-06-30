@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بطولة كأس العالم - التوقعات</title>
+
+<style>
+body{
+margin:0;
+font-family:Tahoma,sans-serif;
+background:linear-gradient(135deg,#0b5d3b,#061f14);
+color:white;
+}
+
+header{
+text-align:center;
+padding:25px;
+font-size:28px;
+font-weight:bold;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+padding:20px;
+}
+
+.match{
+background:white;
+color:black;
+padding:15px;
+border-radius:12px;
+margin-bottom:15px;
+}
+
+button{
+background:#0b8f52;
+color:white;
+border:none;
+padding:8px 12px;
+border-radius:8px;
+cursor:pointer;
+margin-top:8px;
+}
+
+button:disabled{
+background:gray;
+cursor:not-allowed;
+}
+
+input, select{
+width:100%;
+padding:8px;
+margin-top:8px;
+border-radius:8px;
+}
+
+.result{
+margin-top:8px;
+font-weight:bold;
+color:green;
+}
+.close{
+background:#b30000;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+🏆 بطولة كأس العالم 2026 - التوقعات (من دور 32 إلى النهائي)
+</header>
+
+<div class="container">
+
+<!-- MATCH 1 -->
+<div class="match" id="m1">
+<h3>🇫🇷 فرنسا × 🇲🇽 المكسيك (دور 32)</h3>
+
+<input id="n1" placeholder="اسمك">
+<select id="t1">
+<option>فرنسا</option>
+<option>المكسيك</option>
+</select>
+
+<button onclick="predict('m1','n1','t1','r1')">توقع</button>
+<button class="close" onclick="closeMatch('m1')">إغلاق المباراة</button>
+
+<div id="r1" class="result"></div>
+</div>
+
+<!-- MATCH 2 -->
+<div class="match" id="m2">
+<h3>🇧🇷 البرازيل × 🇯🇵 اليابان (دور 32)</h3>
+
+<input id="n2" placeholder="اسمك">
+<select id="t2">
+<option>البرازيل</option>
+<option>اليابان</option>
+</select>
+
+<button onclick="predict('m2','n2','t2','r2')">توقع</button>
+<button class="close" onclick="closeMatch('m2')">إغلاق المباراة</button>
+
+<div id="r2" class="result"></div>
+</div>
+
+<!-- MATCH 3 -->
+<div class="match" id="m3">
+<h3>🇦🇷 الأرجنتين × 🇳🇱 هولندا (دور 32)</h3>
+
+<input id="n3" placeholder="اسمك">
+<select id="t3">
+<option>الأرجنتين</option>
+<option>هولندا</option>
+</select>
+
+<button onclick="predict('m3','n3','t3','r3')">توقع</button>
+<button class="close" onclick="closeMatch('m3')">إغلاق المباراة</button>
+
+<div id="r3" class="result"></div>
+</div>
+
+</div>
+
+<script>
+
+function predict(matchId,nameId,teamId,resultId){
+
+let match = document.getElementById(matchId);
+if(match.dataset.closed === "true"){
+alert("المباراة مقفلة");
+return;
+}
+
+let name = document.getElementById(nameId).value;
+let team = document.getElementById(teamId).value;
+
+if(name === ""){
+alert("اكتب اسمك");
+return;
+}
+
+document.getElementById(resultId).innerHTML =
+"👤 " + name + " توقع: " + team;
+
+}
+
+function closeMatch(id){
+document.getElementById(id).dataset.closed = "true";
+document.getElementById(id).querySelectorAll("button")[0].disabled = true;
+document.getElementById(id).querySelectorAll("select")[0].disabled = true;
+document.getElementById(id).querySelectorAll("input")[0].disabled = true;
+
+let btns = document.getElementById(id).querySelectorAll("button");
+btns.forEach(b=>{
+if(!b.classList.contains("close")){
+b.disabled = true;
+}
+});
+}
+
+</script>
+
+</body>
+</html>
