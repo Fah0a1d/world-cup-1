@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>بطولة التوقعات - نظام النقاط</title>
+<title>بطولة التوقعات - محفوظة</title>
 
 <style>
 body{
@@ -15,17 +15,17 @@ text-align:center;
 .box{
 background:white;
 color:black;
-margin:20px auto;
+margin:15px auto;
 padding:15px;
 width:90%;
-max-width:600px;
+max-width:700px;
 border-radius:12px;
 }
 
 input, select{
 padding:8px;
 margin:5px;
-width:80%;
+width:90%;
 }
 
 button{
@@ -38,82 +38,143 @@ cursor:pointer;
 margin-top:10px;
 }
 
-.result{
+table{
+width:100%;
 margin-top:10px;
-font-weight:bold;
+border-collapse:collapse;
+}
+
+td, th{
+border:1px solid #ccc;
+padding:8px;
 }
 </style>
 </head>
 
 <body>
 
-<h1>🏆 نظام التوقعات بالنقاط</h1>
+<h1>🏆 بطولة التوقعات (حفظ تلقائي)</h1>
 
 <div class="box">
+
 <h3>اسم اللاعب</h3>
-<input id="player" placeholder="اكتب اسمك">
-</div>
+<input id="name" placeholder="اكتب اسمك">
 
-<div class="box">
-<h3>🇧🇷 البرازيل × 🇯🇵 اليابان</h3>
+<h3>التوقعات</h3>
 
-<select id="team">
+<p>🇧🇷 البرازيل × 🇯🇵 اليابان</p>
+<select id="m1">
 <option value="brazil">البرازيل</option>
 <option value="japan">اليابان</option>
 </select>
 
-<br>
+<p>🇫🇷 فرنسا × 🇪🇸 إسبانيا</p>
+<select id="m2">
+<option value="france">فرنسا</option>
+<option value="spain">إسبانيا</option>
+</select>
 
-<input id="score" placeholder="النتيجة (مثال 2-1)">
+<p>🇦🇷 الأرجنتين × 🇳🇱 هولندا</p>
+<select id="m3">
+<option value="argentina">الأرجنتين</option>
+<option value="netherlands">هولندا</option>
+</select>
 
-<button onclick="predict()">توقع</button>
+<p>🏴 إنجلترا × 🇸🇳 السنغال</p>
+<select id="m4">
+<option value="england">إنجلترا</option>
+<option value="senegal">السنغال</option>
+</select>
 
-<div id="out" class="result"></div>
+<p>🇲🇦 المغرب × 🇵🇹 البرتغال</p>
+<select id="m5">
+<option value="morocco">المغرب</option>
+<option value="portugal">البرتغال</option>
+</select>
+
+<button onclick="submitPrediction()">تسجيل التوقع</button>
+
 </div>
 
 <div class="box">
-<h3>النقاط</h3>
-<div id="points">0</div>
+<h2>🏆 جدول الترتيب</h2>
+
+<table>
+<thead>
+<tr>
+<th>الاسم</th>
+<th>النقاط</th>
+</tr>
+</thead>
+<tbody id="board"></tbody>
+</table>
+
 </div>
 
 <script>
 
-let points = 0;
+// النتائج (تعدلها أنت كل ما انتهت مباراة)
+let results = {
+m1:"brazil",
+m2:"france",
+m3:"argentina",
+m4:"england",
+m5:"morocco"
+};
 
-// النتيجة الصحيحة (مؤقتًا)
-let correctWinner = "brazil";
-let correctScore = "2-1";
+// تحميل البيانات من التخزين
+let leaderboard = JSON.parse(localStorage.getItem("board")) || [];
 
-function predict(){
+renderBoard();
 
-let name = document.getElementById("player").value;
-let team = document.getElementById("team").value;
-let score = document.getElementById("score").value;
+function submitPrediction(){
 
-if(name === ""){
+let name = document.getElementById("name").value;
+if(name===""){
 alert("اكتب اسمك");
 return;
 }
 
-let msg = "";
-let add = 0;
+let score = 0;
 
-// فحص الفائز
-if(team === correctWinner){
-add += 1;
-msg += "✔ الفائز صحيح +1\n";
+// حساب النقاط
+if(document.getElementById("m1").value === results.m1) score++;
+if(document.getElementById("m2").value === results.m2) score++;
+if(document.getElementById("m3").value === results.m3) score++;
+if(document.getElementById("m4").value === results.m4) score++;
+if(document.getElementById("m5").value === results.m5) score++;
+
+// لو اللاعب موجود نحدّثه
+let existing = leaderboard.find(p => p.name === name);
+
+if(existing){
+existing.score += score;
+}else{
+leaderboard.push({name:name, score:score});
 }
 
-// فحص النتيجة
-if(score === correctScore){
-add += 3;
-msg += "🔥 النتيجة صحيحة +3";
+// حفظ دائم
+localStorage.setItem("board", JSON.stringify(leaderboard));
+
+renderBoard();
+
 }
 
-points += add;
+function renderBoard(){
 
-document.getElementById("points").innerHTML = points;
-document.getElementById("out").innerText = msg;
+leaderboard.sort((a,b)=>b.score-a.score);
+
+let table = document.getElementById("board");
+table.innerHTML = "";
+
+leaderboard.forEach(p=>{
+table.innerHTML += `
+<tr>
+<td>${p.name}</td>
+<td>${p.score}</td>
+</tr>
+`;
+});
 
 }
 
