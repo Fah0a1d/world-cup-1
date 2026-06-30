@@ -2,25 +2,25 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>بطولة كأس العالم - نظام احترافي</title>
+<title>بطولة التوقعات الاحترافية</title>
 
 <style>
 body{
 margin:0;
 font-family:Tahoma;
 background:linear-gradient(135deg,#e8f5e9,#e3f2fd,#ffffff);
-color:#222;
 text-align:center;
+color:#222;
 }
 
 h1{
 background:#0b5d3b;
 color:white;
-margin:0;
 padding:15px;
+margin:0;
 }
 
-.section{
+.box{
 background:white;
 margin:15px auto;
 padding:15px;
@@ -30,80 +30,141 @@ border-radius:12px;
 box-shadow:0 4px 12px rgba(0,0,0,0.1);
 }
 
+input, select{
+padding:10px;
+margin:5px;
+width:85%;
+border-radius:8px;
+border:1px solid #ccc;
+}
+
+button{
+background:#0b8f52;
+color:white;
+padding:10px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+margin-top:10px;
+}
+
+.admin{background:#ff9800;}
+
 .match{
 border:1px solid #ddd;
 padding:10px;
 margin:10px 0;
 border-radius:10px;
 }
-
-button{
-background:#0b8f52;
-color:white;
-padding:8px 12px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-margin-top:5px;
-}
-
-.admin{
-background:#ff9800;
-}
-
-input, select{
-padding:8px;
-margin:5px;
-width:80%;
-}
 </style>
 </head>
 
 <body>
 
-<h1>🏆 بطولة كأس العالم - نظام شجرة احترافي</h1>
+<h1>🏆 بطولة التوقعات - احترافي</h1>
 
-<!-- 🟢 دور 32 -->
-<div class="section">
-<h2>🟢 دور 32</h2>
+<!-- 👤 اللاعب -->
+<div class="box">
+<h3>👤 اسم اللاعب</h3>
+<input id="nameInput" placeholder="اكتب اسمك">
+<button onclick="saveName()">دخول</button>
+<p id="welcome"></p>
+</div>
 
+<!-- ⚽ المباريات -->
+<div class="box">
+<h3 id="dayTitle"></h3>
+<div id="matches"></div>
+</div>
+
+<!-- 🛠 لوحة التحكم -->
+<div class="box">
+<h3>🛠 إدخال النتائج (أنت)</h3>
+<div id="admin"></div>
+</div>
+
+<script>
+
+// ===== حفظ اللاعب =====
+let user = localStorage.getItem("playerName") || "";
+
+function saveName(){
+let name = document.getElementById("nameInput").value;
+if(!name) return;
+
+user = name;
+localStorage.setItem("playerName", name);
+
+document.getElementById("welcome").innerText =
+"مرحبًا " + name + " 👋";
+}
+
+if(user){
+document.getElementById("welcome").innerText =
+"مرحبًا " + user + " 👋";
+}
+
+// ===== مباريات حسب اليوم =====
+let schedule = {
+1:[ // الاثنين
+{t1:"البرازيل", t2:"اليابان"},
+{t1:"فرنسا", t2:"إسبانيا"}
+],
+2:[ // الثلاثاء
+{t1:"الأرجنتين", t2:"هولندا"},
+{t1:"المغرب", t2:"البرتغال"}
+],
+3:[ // الأربعاء
+{t1:"إنجلترا", t2:"ألمانيا"},
+{t1:"إيطاليا", t2:"البرازيل"}
+],
+4:[ // الخميس
+{t1:"فرنسا", t2:"المغرب"},
+{t1:"البرتغال", t2:"الأرجنتين"}
+]
+};
+
+let day = new Date().getDay(); 
+// 0 الاحد - 1 الاثنين - 2 الثلاثاء ...
+
+let todayMatches = schedule[day] || schedule[1];
+
+document.getElementById("dayTitle").innerText =
+"📅 مباريات اليوم";
+
+// عرض المباريات
+function loadMatches(){
+
+let html = "";
+let admin = "";
+
+todayMatches.forEach((m,i)=>{
+
+html += `
 <div class="match">
-🇧🇷 البرازيل × 🇯🇵 اليابان
-<input placeholder="النتيجة (2-1)">
-<button class="admin">إنهاء المباراة</button>
+${m.t1} × ${m.t2}
+<br>
+<input placeholder="توقع النتيجة (2-1)" id="p${i}">
 </div>
+`;
 
-<div class="match">
-🇫🇷 فرنسا × 🇪🇸 إسبانيا
-<input placeholder="النتيجة">
-<button class="admin">إنهاء المباراة</button>
+admin += `
+<div>
+${m.t1} × ${m.t2}
+<input placeholder="النتيجة (2-1)" id="r${i}">
 </div>
+`;
 
-<div class="match">
-🇦🇷 الأرجنتين × 🇳🇱 هولندا
-<input placeholder="النتيجة">
-<button class="admin">إنهاء المباراة</button>
-</div>
+});
 
-<div class="match">
-🇲🇦 المغرب × 🇵🇹 البرتغال
-<input placeholder="النتيجة">
-<button class="admin">إنهاء المباراة</button>
-</div>
+document.getElementById("matches").innerHTML = html;
+document.getElementById("admin").innerHTML = admin;
 
-</div>
+}
 
-<!-- 🟡 دور 16 -->
-<div class="section">
-<h2>🟡 دور 16 (يتعبّى تلقائي)</h2>
-<p>الفائزين من دور 32 يظهرون هنا تلقائي 🔁</p>
-</div>
+loadMatches();
 
-<!-- 🏆 الترتيب -->
-<div class="section">
-<h2>🏆 جدول النقاط</h2>
-<p>سيظهر ترتيب اللاعبين هنا</p>
-</div>
+</script>
 
 </body>
 </html>
